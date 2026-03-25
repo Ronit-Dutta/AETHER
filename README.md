@@ -1,5 +1,7 @@
 # 🛸 Project AETHER — Autonomous Exoplanet Mission Control
 
+**🔗 Live Dashboard:** [https://Ronit-Dutta.github.io/AETHER](https://Ronit-Dutta.github.io/AETHER)
+
 > **AETHER** = Autonomous Exoplanet Terrain & Habitability Evaluation Report
 
 An AI-powered autonomous system that scans NASA's Exoplanet Archive 24/7, calculates habitability scores using real astrophysics, generates speculative biology reports via Google Gemini, and visualizes alien worlds in interactive 3D.
