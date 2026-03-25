@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Project AETHER — Autonomous Exoplanet Terrain & Habitability Evaluation Report. A 24/7 AI-powered mission control scanning NASA's archive for habitable worlds.">
+    <title>Project AETHER — Autonomous Exoplanet Mission Control</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Favicon (inline SVG) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛸</text></svg>">
+</head>
+<body>
+
+    <!-- Loading Screen Removed to prevent blocking -->
+
+    <!-- ─── Animated Background ─── -->
+    <div class="bg-stars"></div>
+    <div class="bg-nebula"></div>
+    <div class="stars-container" id="starsContainer"></div>
+
+    <!-- ─── Navigation ─── -->
+    <nav class="nav" id="mainNav">
+        <a href="#" class="nav-brand" onclick="switchSection('dashboard')">
+            <div class="nav-logo">🛸</div>
+            <div>
+                <div class="nav-title">AETHER</div>
+                <div class="nav-subtitle">Mission Control v2.0</div>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><button class="nav-link active" data-section="dashboard" onclick="switchSection('dashboard')">Dashboard</button></li>
+            <li><button class="nav-link" data-section="viewer" onclick="switchSection('viewer')">3D Viewer</button></li>
+            <li><button class="nav-link" data-section="logs" onclick="switchSection('logs')">Mission Logs</button></li>
+        </ul>
+        <div class="nav-status">
+            <div class="status-dot"></div>
+            <span id="navStatusText">SYSTEMS ONLINE</span>
+        </div>
+    </nav>
+
+    <!-- ─── Main Content ─── -->
+    <main class="main-content">
+
+        <!-- ═══════════ DASHBOARD SECTION ═══════════ -->
+        <section class="section active" id="section-dashboard">
+
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    AUTONOMOUS AGENT ACTIVE — SCANNING COSMOS 24/7
+                </div>
+                <h1>Autonomous Exoplanet<br>Mission Control</h1>
+                <p>Project AETHER is an AI-powered system that autonomously scans NASA's Exoplanet Archive, 
+                   calculates habitability scores, generates speculative biology reports, and visualizes 
+                   alien worlds in 3D — all without human intervention.</p>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar" id="statsBar">
+                <div class="stat-card">
+                    <div class="stat-value" id="statPlanets">—</div>
+                    <div class="stat-label">Planets Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statHabitable">—</div>
+                    <div class="stat-label">Habitable Candidates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statBioReports">—</div>
+                    <div class="stat-label">Bio-Reports Generated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statMissions">—</div>
+                    <div class="stat-label">Missions Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statAvgScore">—</div>
+                    <div class="stat-label">Avg. Habitability</div>
+                </div>
+            </div>
+
+            <!-- Discovery Gallery -->
+            <div class="discovery-gallery">
+                <div class="gallery-header">
+                    <h2>🪐 Discovery Gallery</h2>
+                    <div class="gallery-filters">
+                        <button class="filter-btn active" data-filter="all" onclick="filterPlanets('all')">All</button>
+                        <button class="filter-btn" data-filter="prime" onclick="filterPlanets('prime')">Prime</button>
+                        <button class="filter-btn" data-filter="promising" onclick="filterPlanets('promising')">Promising</button>
+                        <button class="filter-btn" data-filter="terrestrial" onclick="filterPlanets('terrestrial')">Terrestrial</button>
+                        <button class="filter-btn" data-filter="supearth" onclick="filterPlanets('supearth')">Super-Earth</button>
+                    </div>
+                </div>
+                <div class="planet-grid" id="planetGrid">
+                    <!-- Cards are injected dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ 3D VIEWER SECTION ═══════════ -->
+        <section class="section" id="section-viewer">
+            <div class="viewer-section">
+                <div class="gallery-header">
+                    <h2>🌌 3D Exoplanet Viewer</h2>
+                </div>
+                <div class="viewer-container">
+                    <div class="viewer-canvas-wrap" id="viewerCanvasContainer">
+                        <!-- Three.js full viewer canvas renders here -->
+                        <div class="viewer-controls">
+                            <button class="viewer-btn active" onclick="setViewerMode('orbit')">Orbit</button>
+                            <button class="viewer-btn" onclick="setViewerMode('surface')">Surface</button>
+                            <button class="viewer-btn" onclick="toggleViewerRotation()">⏸ Rotation</button>
+                        </div>
+                    </div>
+                    <div class="viewer-sidebar">
+                        <h3 style="font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 1rem; color: var(--accent-cyan);">SELECT PLANET</h3>
+                        <div class="viewer-planet-list" id="viewerPlanetList">
+                            <!-- Planet items injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ MISSION LOGS SECTION ═══════════ -->
+        <section class="section" id="section-logs">
+            <div class="log-container">
+                <div class="gallery-header">
+                    <h2>📋 Mission Logs</h2>
+                </div>
+                <div id="missionLogs">
+                    <!-- Log entries injected dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ─── Planet Detail Modal ─── -->
+    <div class="modal-overlay" id="planetModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-hero" id="modalHero">
+                <!-- 3D planet renders here -->
+                <div class="modal-hero-overlay">
+                    <div class="modal-planet-name" id="modalPlanetName"></div>
+                    <div class="modal-planet-classification" id="modalPlanetClassification"></div>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Footer ─── -->
+    <footer class="footer">
+        <p>AETHER v2.0 — Autonomous Exoplanet Terrain & Habitability Evaluation Report</p>
+        <p style="margin-top: 0.5rem;">Built with 🧠 Gemini AI &bull; 🛢️ Supabase &bull; 🌌 Three.js &bull; 🚀 NASA Exoplanet Archive</p>
+    </footer>
+
+    <!-- ─── Application JS ─── -->
+    <script src="app.js?v=3" charset="utf-8"></script>
+</body>
+</html>

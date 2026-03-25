@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JS Syntax Error Trapper</title>
+    <script>
+        window.onerror = function(msg, url, line, col, error) {
+            document.body.innerHTML += "<h1 style='color:red;'>ERROR: " + msg + " at " + line + ":" + col + "</h1>";
+            if (error && error.stack) {
+                document.body.innerHTML += "<pre>" + error.stack + "</pre>";
+            }
+            return false;
+        };
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName && e.target.tagName.toLowerCase() === 'script') {
+                document.body.innerHTML += "<h1 style='color:red;'>SCRIPT LOAD ERROR on " + e.target.src + "</h1>";
+            }
+        }, true);
+    </script>
+    <script src="app_backup.js"></script>
+</head>
+<body>
+    <h1>Testing app_backup.js... (If no errors appear below, it parsed perfectly)</h1>
+</body>
+</html>

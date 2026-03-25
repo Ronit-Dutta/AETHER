@@ -1,0 +1,40 @@
+name: 'AETHER Daily Mission'
+
+on:
+  schedule:
+    # Run every day at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    # Allow manual triggering from GitHub UI
+    inputs:
+      planet_limit:
+        description: 'Max number of planets to scan'
+        required: false
+        default: '50'
+
+jobs:
+  daily-scan:
+    runs-on: ubuntu-latest
+    name: '🛸 Exoplanet Discovery Scan'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run AETHER Mission
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        working-directory: backend
+        run: |
+          python mission_control.py ${{ github.event.inputs.planet_limit || '50' }}
