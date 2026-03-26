@@ -38,3 +38,11 @@ jobs:
         working-directory: backend
         run: |
           python mission_control.py ${{ github.event.inputs.planet_limit || '50' }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add backend/last_discovered.json
+          git commit -m "Update last_discovered.json offset [skip ci]" || echo "No changes to commit"
+          git push

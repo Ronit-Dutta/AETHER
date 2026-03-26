@@ -11,6 +11,7 @@ This script is designed to be run daily via GitHub Actions.
 import sys
 import time
 import json
+import random
 from datetime import datetime
 
 from nasa_fetcher import fetch_recent_exoplanets
@@ -58,6 +59,9 @@ def run_mission(limit=50, generate_reports=True):
             complete_mission(supabase, mission_id, 0, 0, 0, 0, ["No data from NASA"])
         return
         
+    # Shuffle for variety in discovery
+    random.shuffle(raw_planets_all)
+    
     raw_planets = []
     for p in raw_planets_all:
         if p.get("pl_name") not in existing_names:
