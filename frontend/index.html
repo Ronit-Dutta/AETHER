@@ -36,6 +36,7 @@
         <ul class="nav-links">
             <li><button class="nav-link active" data-section="dashboard" onclick="switchSection('dashboard')">Dashboard</button></li>
             <li><button class="nav-link" data-section="viewer" onclick="switchSection('viewer')">3D Viewer</button></li>
+            <li><button class="nav-link" data-section="research" onclick="switchSection('research')">Research Hub</button></li>
             <li><button class="nav-link" data-section="logs" onclick="switchSection('logs')">Mission Logs</button></li>
         </ul>
         <div class="nav-status">
@@ -137,6 +138,19 @@
                 </div>
                 <div id="missionLogs">
                     <!-- Log entries injected dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ RESEARCH HUB SECTION ═══════════ -->
+        <section class="section" id="section-research">
+            <div class="research-container">
+                <div class="gallery-header">
+                    <h2>📚 Research Hub</h2>
+                    <p>Scientific papers and data repositories informing AETHER's habitability models.</p>
+                </div>
+                <div class="research-grid" id="researchGrid">
+                    <!-- Research papers injected dynamically -->
                 </div>
             </div>
         </section>

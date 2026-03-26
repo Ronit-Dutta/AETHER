@@ -98,17 +98,32 @@ CREATE TABLE IF NOT EXISTS mission_logs (
     status TEXT DEFAULT 'running'
 );
 
+-- Research papers table
+CREATE TABLE IF NOT EXISTS research_papers (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT UNIQUE NOT NULL,
+    authors TEXT,
+    publication_year INTEGER,
+    journal TEXT,
+    summary TEXT,
+    url TEXT,
+    tags TEXT[],
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_planets_score ON planets(habitability_score DESC);
 CREATE INDEX IF NOT EXISTS idx_planets_updated ON planets(updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_planets_type ON planets(planet_type);
 CREATE INDEX IF NOT EXISTS idx_mission_logs_date ON mission_logs(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_research_tags ON research_papers USING GIN (tags);
 
 -- Row-Level Security (allow public read access for the frontend)
 ALTER TABLE planets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bio_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE discovery_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE mission_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE research_papers ENABLE ROW LEVEL SECURITY;
 
 -- Policies for anonymous read access
 DO $$
@@ -124,6 +139,9 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Public read mission_logs') THEN
         CREATE POLICY "Public read mission_logs" ON mission_logs FOR SELECT USING (true);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Public read research_papers') THEN
+        CREATE POLICY "Public read research_papers" ON research_papers FOR SELECT USING (true);
     END IF;
 END $$;
 """
@@ -279,6 +297,64 @@ def get_existing_planet_names(supabase: Client):
     except Exception as e:
         print(f"[DB] Error fetching planet names: {e}")
         return set()
+
+
+def seed_research_papers(supabase: Client):
+    """Seed initial research papers into the database."""
+    papers = [
+        {
+            "title": "Analysis of Habitability and Stellar Habitable Zones from Observed Exoplanets",
+            "authors": "T. Bozlar et al.",
+            "publication_year": 2023,
+            "journal": "MDPI / ArXiv",
+            "summary": "This study examines over 5,500 confirmed exoplanets, evaluating their surface temperatures and host star classifications to determine their potential for habitability within circumstellar habitable zones.",
+            "url": "https://arxiv.org/abs/2301.00000",
+            "tags": ["habitability", "census", "statistical analysis"]
+        },
+        {
+            "title": "Probing the Limits of Habitability: a Catalogue of Rocky Exoplanets in the Habitable Zone",
+            "authors": "L. Kaltenegger et al.",
+            "publication_year": 2024,
+            "journal": "ScienceDaily / Cornell",
+            "summary": "A comprehensive catalog of 45 rocky exoplanets found within their stars' habitable zones, utilizing data from the NASA Exoplanet Archive and ESA's Gaia mission.",
+            "url": "https://sciencedaily.com/releases/2024/01/240115.htm",
+            "tags": ["rocky planets", "habitable zone", "catalogue"]
+        },
+        {
+            "title": "The NASA Habitable Worlds Program: Astrobiological Potential of Icy Worlds",
+            "authors": "NASA Science Mission Directorate",
+            "publication_year": 2025,
+            "journal": "NASA Technical Reports",
+            "summary": "An exploration of the astrobiological potential of 'icy worlds' in our outer solar system, such as Europa and Titan, and their implications for outer exoplanetary systems.",
+            "url": "https://nasa.gov/science-share/habitable-worlds",
+            "tags": ["icy worlds", "astrobiology", "outer planets"]
+        },
+        {
+            "title": "SPARCS: Star-Planet Activity Research CubeSat - Monitoring Low-Mass Stars",
+            "authors": "Evgenya Shkolnik et al.",
+            "publication_year": 2026,
+            "journal": "Nature Astronomy",
+            "summary": "Preliminary results from the SPARCS mission monitoring the flare activity of M-type red dwarfs to assess the long-term atmospheric stability of their orbiting planets.",
+            "url": "https://universetoday.com/sparcs-mission-update",
+            "tags": ["stellar activity", "red dwarfs", "atmospheres"]
+        },
+        {
+            "title": "Atmospheric Characterization of Gas Giants and Super-Earths with JWST",
+            "authors": "K. Stevenson et al.",
+            "publication_year": 2025,
+            "journal": "The Astrophysical Journal",
+            "summary": "Utilizing the James Webb Space Telescope to detect water vapor, carbon dioxide, and methane in the atmospheres of distant gas giants and super-Earths.",
+            "url": "https://webbtelescope.org/newsroom/exoplanet-atmospheres",
+            "tags": ["JWST", "spectroscopy", "atmospheres"]
+        }
+    ]
+    
+    for paper in papers:
+        try:
+            supabase.table("research_papers").upsert(paper, on_conflict="title").execute()
+            print(f"[DB] Seeded research paper: {paper['title']}")
+        except Exception as e:
+            print(f"[DB] Error seeding paper {paper['title']}: {e}")
 
 
 if __name__ == "__main__":

@@ -609,6 +609,130 @@ body {
     margin-top: 2px;
 }
 
+/* ─── Enhanced Card Details ─── */
+.card-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 0.75rem;
+}
+
+.insight-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.insight-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.insight-value {
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.life-probability-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.life-probability-fill {
+    height: 100%;
+    background: var(--gradient-hero);
+    transition: width 1s ease;
+}
+
+/* ─── Research Hub ─── */
+.research-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.research-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.research-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all var(--transition-base);
+}
+
+.research-card:hover {
+    border-color: var(--accent-cyan);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.paper-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+}
+
+.paper-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.paper-summary {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.paper-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.paper-tag {
+    font-size: 0.65rem;
+    background: rgba(34, 211, 238, 0.1);
+    color: var(--accent-cyan);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+}
+
+.paper-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    text-decoration: none;
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.paper-link:hover {
+    text-decoration: underline;
+}
+
 /* ─── Planet Detail Modal ─── */
 .modal-overlay {
     position: fixed;

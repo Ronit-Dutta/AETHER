@@ -155,37 +155,68 @@ IMPORTANT:
 
 def generate_planet_description(planet_profile):
     """
-    Generate a short, compelling description of the planet for the Discovery Card.
+    Generate a detailed, compelling description of the planet for the Discovery Card.
+    Includes weather, habitability, living conditions, and chance of life.
     
     Args:
         planet_profile: Enriched planet dictionary
     
     Returns:
-        String with a 1-2 sentence compelling description
+        JSON string or dictionary with detailed insights
     """
     hab = planet_profile.get("habitability", {})
     eq_temp = planet_profile.get("equilibrium_temp_k")
     planet_type = planet_profile.get("planet_type", {})
 
-    prompt = f"""You are a science communicator for Project AETHER. Write a single compelling, awe-inspiring sentence (max 30 words) describing the exoplanet {planet_profile['name']}.
+    prompt = f"""You are a senior astrobiologist for Project AETHER. 
+    Analyze the exoplanet {planet_profile['name']} and provide a structured discovery report.
 
-Data: Type={planet_type.get('type')}, Temp={eq_temp}K, Radius={planet_profile.get('radius_earth')}x Earth, Score={hab.get('score',0)}%, {hab.get('classification','Unknown')}.
+    Data: 
+    - Type: {planet_type.get('type')}
+    - Temp: {eq_temp}K
+    - Radius: {planet_profile.get('radius_earth')}x Earth
+    - Habitability Score: {hab.get('score', 0)}%
+    - Classification: {hab.get('classification', 'Unknown')}
+    - Distance: {planet_profile.get('distance_ly')} ly
 
-Return ONLY the sentence, no quotes or formatting."""
+    Provide the following in JSON format:
+    {{
+        "weather": "1-2 lines describing the likely weather/atmospheric conditions.",
+        "habitability_insight": "2-3 lines about how a human or life could live there, including surface/living conditions.",
+        "life_probability": "An estimated percentage (0-100%)",
+        "life_reasoning": "A one-sentence scientific justification for this probability."
+    }}
+
+    Return ONLY valid JSON."""
 
     try:
         response = client.models.generate_content(
             model=MODEL,
             contents=prompt,
             config={
-                "temperature": 0.9,
-                "max_output_tokens": 100,
+                "temperature": 0.8,
+                "max_output_tokens": 500,
             }
         )
-        return response.text.strip()
+        text = response.text.strip()
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1].rsplit("```", 1)[0]
+        if text.startswith("json"):
+            text = text[4:]
+            
+        # Validate JSON
+        json.loads(text.strip())
+        return text.strip()
     except Exception as e:
-        print(f"[GEMINI] Error generating description: {e}")
-        return f"A {planet_type.get('type', 'mysterious')} world awaiting further analysis."
+        import traceback
+        print(f"[GEMINI] Error generating detailed description: {e}")
+        traceback.print_exc()
+        return json.dumps({
+            "weather": "Atmospheric data pending.",
+            "habitability_insight": f"A {planet_type.get('type', 'mysterious')} world awaiting further analysis.",
+            "life_probability": "5%",
+            "life_reasoning": "Baseline estimate based on planetary classification."
+        })
 
 
 if __name__ == "__main__":

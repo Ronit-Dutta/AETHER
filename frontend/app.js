@@ -443,6 +443,26 @@ async function fetchMissionLogs() {
     }
 }
 
+async function fetchResearchPapers() {
+    if (!supabase) return [];
+
+    try {
+        const { data, error } = await promiseWithTimeout(
+            supabase
+                .from('research_papers')
+                .select('*')
+                .order('publication_year', { ascending: false }),
+            3000
+        );
+
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.warn('Research fetch failed:', e);
+        return [];
+    }
+}
+
 // --- Demo Data (used before first real mission runs) --- 
 function getDemoData() {
     return [
@@ -482,12 +502,45 @@ function renderPlanetCards(planets) {
         const tempK = planet.equilibrium_temp_k;
         const tempC = tempK ? (tempK - 273.15).toFixed(0) : '?';
 
+        // Parse detailed info if it's JSON
+        let detailedInfo = null;
+        try {
+            if (planet.short_description && planet.short_description.startsWith('{')) {
+                detailedInfo = JSON.parse(planet.short_description);
+            }
+        } catch (e) {
+            console.warn("JSON parse error for planet description", e);
+        }
+
         const card = document.createElement('div');
         card.className = 'planet-card';
         card.style.setProperty('--card-accent', `linear-gradient(90deg, ${scoreColor}, transparent)`);
         card.setAttribute('data-classification', (planet.habitability_classification || '').toLowerCase().replace(' ', ''));
         card.setAttribute('data-type', (planet.planet_type || '').toLowerCase().replace('-', ''));
         card.onclick = () => openModal(planet);
+
+        let insightHTML = '';
+        if (detailedInfo) {
+            insightHTML = `
+                <div class="card-insights">
+                    <div class="insight-item">
+                        <span class="insight-label">Weather</span>
+                        <span class="insight-value">${detailedInfo.weather}</span>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Habitability</span>
+                        <span class="insight-value">${detailedInfo.habitability_insight}</span>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Life Probability: ${detailedInfo.life_probability}</span>
+                        <div class="life-probability-bar">
+                            <div class="life-probability-fill" style="width: ${detailedInfo.life_probability}"></div>
+                        </div>
+                        <span class="insight-value" style="font-size: 0.7rem; margin-top: 4px; font-style: italic;">${detailedInfo.life_reasoning}</span>
+                    </div>
+                </div>
+            `;
+        }
 
         card.innerHTML = `
             <div class="card-canvas-container" id="${canvasId}">
@@ -499,7 +552,7 @@ function renderPlanetCards(planets) {
             <div class="card-body">
                 <div class="card-name">${planet.pl_name}</div>
                 <div class="card-star">- ${planet.host_star || 'Unknown'} - ${planet.star_spectral_type || '?'} - ${planet.distance_ly ? planet.distance_ly.toFixed(1) + ' ly' : '? ly'}</div>
-                <div class="card-description">${planet.short_description || planet.planet_type_description || 'Awaiting AI analysis...'}</div>
+                ${detailedInfo ? insightHTML : `<div class="card-description">${planet.short_description || planet.planet_type_description || 'Awaiting AI analysis...'}</div>`}
                 <div class="card-metrics">
                     <div class="metric">
                         <div class="metric-value">${planet.radius_earth ? parseFloat(planet.radius_earth).toFixed(2) : '?'}</div>
@@ -799,6 +852,29 @@ function renderViewerSidebar(planets) {
     `).join('');
 }
 
+// --- Render Research Papers ---
+function renderResearchPapers(papers) {
+    const grid = document.getElementById('researchGrid');
+    if (!grid) return;
+
+    if (papers.length === 0) {
+        grid.innerHTML = '<div class="paper-summary">No research papers available in the database.</div>';
+        return;
+    }
+
+    grid.innerHTML = papers.map(paper => `
+        <div class="research-card">
+            <div class="paper-title">${paper.title}</div>
+            <div class="paper-meta">${paper.authors} | ${paper.journal} (${paper.publication_year})</div>
+            <div class="paper-summary">${paper.summary}</div>
+            <div class="paper-tags">
+                ${(paper.tags || []).map(tag => `<span class="paper-tag">${tag}</span>`).join('')}
+            </div>
+            <a href="${paper.url}" target="_blank" class="paper-link">View Full Paper &rarr;</a>
+        </div>
+    `).join('');
+}
+
 // --- Loading Screen --- 
 function hideLoading() {
     const loading = document.getElementById('loadingScreen');
@@ -822,6 +898,9 @@ async function init() {
     updateLoadingText('FETCHING PLANETARY DATA...');
     allPlanets = await fetchPlanets();
 
+    updateLoadingText('FETCHING RESEARCH REPOSITORY...');
+    const papers = await fetchResearchPapers();
+
     updateLoadingText('LOADING MISSION LOGS...');
     const logs = await fetchMissionLogs();
 
@@ -832,6 +911,7 @@ async function init() {
     updateStats(allPlanets, logs);
     renderMissionLogs(logs);
     renderViewerSidebar(allPlanets);
+    renderResearchPapers(papers);
 
     updateLoadingText('SYSTEMS ONLINE');
     await new Promise(r => setTimeout(r, 500));
