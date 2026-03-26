@@ -551,7 +551,12 @@ function renderPlanetCards(planets) {
             <div class="card-body">
                 <div class="card-name">${planet.pl_name}</div>
                 <div class="card-star">- ${planet.host_star || 'Unknown'} - ${planet.star_spectral_type || '?'} - ${planet.distance_ly ? planet.distance_ly.toFixed(1) + ' ly' : '? ly'}</div>
-                ${detailedInfo ? insightHTML : `<div class="card-description">${planet.short_description || planet.planet_type_description || 'Awaiting AI analysis...'}</div>`}
+                ${detailedInfo ? insightHTML : `
+                    <div class="card-description">
+                        <div class="processing-glow"></div>
+                        <span>${planet.short_description || 'AETHER Neural Link active. Characterizing planetary signatures...'}</span>
+                    </div>
+                `}
                 <div class="card-metrics">
                     <div class="metric">
                         <div class="metric-value">${planet.radius_earth ? parseFloat(planet.radius_earth).toFixed(2) : '?'}</div>
