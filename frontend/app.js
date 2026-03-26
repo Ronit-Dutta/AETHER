@@ -407,8 +407,7 @@ async function fetchPlanets() {
             supabase
                 .from('planets')
                 .select('*')
-                .order('habitability_score', { ascending: false })
-                .limit(1000),
+                .order('habitability_score', { ascending: false }),
             3000
         );
 
