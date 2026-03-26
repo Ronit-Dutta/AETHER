@@ -408,7 +408,7 @@ async function fetchPlanets() {
                 .from('planets')
                 .select('*')
                 .order('habitability_score', { ascending: false })
-                .limit(100),
+                .limit(1000),
             3000
         );
 
