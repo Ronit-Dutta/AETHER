@@ -96,8 +96,9 @@ def run_mission(limit=50, generate_reports=True):
                 # Generate short description
                 short_desc = generate_planet_description(profile)
                 
-                # Generate full bio-report only for interesting planets or new ones
-                if is_new or hab["score"] >= 25:
+                # Generate bio-report for ALL planets as requested by user
+                if generate_reports:
+                    print(f"      [AI] Generating intelligent report...")
                     bio_report = generate_bio_report(profile)
                     if bio_report and "error" not in bio_report:
                         reports_generated += 1
