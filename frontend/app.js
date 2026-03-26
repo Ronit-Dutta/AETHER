@@ -704,6 +704,37 @@ function openModal(planet) {
             </div>
         </div>
 
+        <!-- AI Insights -->
+        ${planet.short_description && planet.short_description.startsWith('{') ? (() => {
+            try {
+                const info = JSON.parse(planet.short_description);
+                return `
+                <div class="modal-section" style="border-top: 1px solid var(--border-subtle); padding-top: 2rem;">
+                    <h3>--- ASTRO-INTELLIGENCE REPORT</h3>
+                    <div class="insight-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 1rem;">
+                        <div class="insight-card">
+                            <span class="insight-label">Weather Systems</span>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">${info.weather}</p>
+                        </div>
+                        <div class="insight-card">
+                            <span class="insight-label">Habitability Insight</span>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">${info.habitability_insight}</p>
+                        </div>
+                        <div class="insight-card">
+                            <span class="insight-label">Current Life Probability</span>
+                            <div class="life-probability-bar" style="height: 6px; margin: 10px 0;">
+                                <div class="life-probability-fill" style="width: ${info.life_probability}"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-cyan);">
+                                <span>${info.life_probability}</span>
+                            </div>
+                            <p style="font-size: 0.8rem; font-style: italic; color: var(--text-muted); margin-top: 8px;">${info.life_reasoning}</p>
+                        </div>
+                    </div>
+                </div>`;
+            } catch(e) { return ''; }
+        })() : ''}
+
         ${bio.environment_summary ? `
         <div class="modal-section">
             <h3>-- ENVIRONMENT</h3>

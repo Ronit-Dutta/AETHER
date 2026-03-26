@@ -199,14 +199,18 @@ def generate_planet_description(planet_profile):
             }
         )
         text = response.text.strip()
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1].rsplit("```", 1)[0]
-        if text.startswith("json"):
-            text = text[4:]
+        
+        # Try to find JSON block in the text
+        import re
+        json_match = re.search(r"(\{.*\})", text, re.DOTALL)
+        if json_match:
+            json_text = json_match.group(1).strip()
+            # Validate JSON
+            json.loads(json_text)
+            return json_text
             
-        # Validate JSON
-        json.loads(text.strip())
-        return text.strip()
+        # Fallback if no JSON-like structure found
+        raise ValueError("No JSON object found in response")
     except Exception as e:
         import traceback
         print(f"[GEMINI] Error generating detailed description: {e}")
