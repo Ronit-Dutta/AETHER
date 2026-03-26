@@ -44,20 +44,28 @@ def run_mission(limit=50, generate_reports=True):
     planets_updated = 0
     reports_generated = 0
     
+    # Get existing planets to detect new discoveries
+    existing_names = get_existing_planet_names(supabase)
+
     # Step 1: Fetch from NASA
     print("\n📡 PHASE 1: Scanning NASA Exoplanet Archive...")
-    raw_planets = fetch_recent_exoplanets(limit=limit)
+    # Fetch a large chunk to ensure we find enough new ones
+    raw_planets_all = fetch_recent_exoplanets(limit=10000)
     
-    if not raw_planets:
+    if not raw_planets_all:
         print("❌ No data received from NASA. Aborting mission.")
         if mission_id:
             complete_mission(supabase, mission_id, 0, 0, 0, 0, ["No data from NASA"])
         return
-    
-    print(f"   ✅ Received {len(raw_planets)} planetary records\n")
-    
-    # Get existing planets to detect new discoveries
-    existing_names = get_existing_planet_names(supabase)
+        
+    raw_planets = []
+    for p in raw_planets_all:
+        if p.get("pl_name") not in existing_names:
+            raw_planets.append(p)
+        if len(raw_planets) >= limit:
+            break
+            
+    print(f"   ✅ Discovered {len(raw_planets)} NEW planetary records from {len(raw_planets_all)} scanned\n")
     
     # Step 2 & 3: Process each planet
     print("🔬 PHASE 2: Habitability Analysis & Intelligence Report Generation...")
@@ -109,7 +117,7 @@ def run_mission(limit=50, generate_reports=True):
             errors.append(error_msg)
     
     # Complete mission log
-    total_scanned = len(raw_planets)
+    total_scanned = len(raw_planets_all)
     if mission_id:
         complete_mission(supabase, mission_id, total_scanned, planets_new, planets_updated, reports_generated, errors)
     
