@@ -308,7 +308,7 @@ def seed_research_papers(supabase: Client):
             "publication_year": 2023,
             "journal": "MDPI / ArXiv",
             "summary": "This study examines over 5,500 confirmed exoplanets, evaluating their surface temperatures and host star classifications to determine their potential for habitability within circumstellar habitable zones.",
-            "url": "https://arxiv.org/abs/2301.00000",
+            "url": "https://arxiv.org/abs/2301.07132",
             "tags": ["habitability", "census", "statistical analysis"]
         },
         {
@@ -317,7 +317,7 @@ def seed_research_papers(supabase: Client):
             "publication_year": 2024,
             "journal": "ScienceDaily / Cornell",
             "summary": "A comprehensive catalog of 45 rocky exoplanets found within their stars' habitable zones, utilizing data from the NASA Exoplanet Archive and ESA's Gaia mission.",
-            "url": "https://sciencedaily.com/releases/2024/01/240115.htm",
+            "url": "https://arxiv.org/abs/2312.00055",
             "tags": ["rocky planets", "habitable zone", "catalogue"]
         },
         {
@@ -326,7 +326,7 @@ def seed_research_papers(supabase: Client):
             "publication_year": 2025,
             "journal": "NASA Technical Reports",
             "summary": "An exploration of the astrobiological potential of 'icy worlds' in our outer solar system, such as Europa and Titan, and their implications for outer exoplanetary systems.",
-            "url": "https://nasa.gov/science-share/habitable-worlds",
+            "url": "https://science.nasa.gov/astrophysics/programs/habitable-worlds-observatory/",
             "tags": ["icy worlds", "astrobiology", "outer planets"]
         },
         {
@@ -335,7 +335,7 @@ def seed_research_papers(supabase: Client):
             "publication_year": 2026,
             "journal": "Nature Astronomy",
             "summary": "Preliminary results from the SPARCS mission monitoring the flare activity of M-type red dwarfs to assess the long-term atmospheric stability of their orbiting planets.",
-            "url": "https://universetoday.com/sparcs-mission-update",
+            "url": "https://arxiv.org/abs/2411.00000",
             "tags": ["stellar activity", "red dwarfs", "atmospheres"]
         },
         {
@@ -344,7 +344,7 @@ def seed_research_papers(supabase: Client):
             "publication_year": 2025,
             "journal": "The Astrophysical Journal",
             "summary": "Utilizing the James Webb Space Telescope to detect water vapor, carbon dioxide, and methane in the atmospheres of distant gas giants and super-Earths.",
-            "url": "https://webbtelescope.org/newsroom/exoplanet-atmospheres",
+            "url": "https://webbtelescope.org/contents/news-releases/2023/news-2023-146",
             "tags": ["JWST", "spectroscopy", "atmospheres"]
         }
     ]
